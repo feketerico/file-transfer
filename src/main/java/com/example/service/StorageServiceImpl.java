@@ -1,5 +1,6 @@
 package com.example.service;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
@@ -12,22 +13,19 @@ import com.example.model.Result;
 import com.example.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Objects;
 
 @Service
 public class StorageServiceImpl implements StorageService {
@@ -71,7 +69,7 @@ public class StorageServiceImpl implements StorageService {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             fileMessage.setFileName(fileName);
             fileMessage.setFilePath(targetLocation.toString());
-            fileMessage.setTag(1);
+            fileMessage.setTag(0);
 
             if (null == redisTemplate.opsForValue().get(fileId)){
 
@@ -104,15 +102,17 @@ public class StorageServiceImpl implements StorageService {
 
         Object value = redisTemplate.opsForValue().get(id);
         JSONObject json = (JSONObject) JSON.toJSON(value);
-        String filePath = json.get("filePath")+"";
+//        String fileName = json.get("fileName")+"";
+        String afterPath = json.get("afterPath")+"";
         Integer tag = (Integer) json.get("tag");
         if (tag == 1){
-            HttpRequest get = HttpUtil.createGet(filePath);
+
+            HttpRequest get = HttpUtil.createGet(afterPath);
             HttpResponse execute = get.execute();
             //获取输入流对象（用于读文件）
             BufferedInputStream bis = new BufferedInputStream(execute.bodyStream());
             //获取文件后缀
-            String fileName = filePath.substring(filePath.lastIndexOf("/"));
+            String fileName = afterPath.substring(afterPath.lastIndexOf("/"));
             response.setContentType("application/octet-stream");
             //设置响应头,attachment表示以附件的形式下载，inline表示在线打开
             response.setHeader("content-disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
@@ -127,17 +127,18 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Result recieveMessageFromServer(FileMessage params) {
+    public Result recieveMessageFromServer(String id,String fileName,String afterPath,String description) {
 
-        if (!StringUtils.isEmpty(params)){
+        if (!StringUtils.isEmpty(id)){
             FileMessage fileMessage = new FileMessage();
-            fileMessage.setId(params.getId());
-            fileMessage.setFileName(params.getFileName());
-            fileMessage.setAfterPath(params.getAfterPath());
-            fileMessage.setTag(0);
+            fileMessage.setId(id);
+            fileMessage.setFileName(fileName);
+            fileMessage.setAfterPath(afterPath);
+            fileMessage.setDescription(description);
+            fileMessage.setTag(1);
 
             //更新redis文件信息为处理后的信息
-            redisTemplate.opsForValue().set(params.getId(),fileMessage);
+            redisTemplate.opsForValue().set(id,fileMessage);
 
             return ResultUtil.success();
         }else {

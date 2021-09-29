@@ -14,6 +14,6 @@ public interface StorageService {
 
     Result<FileMessage> sendMessageToServer();
 
-    Result recieveMessageFromServer(FileMessage params);
+    Result recieveMessageFromServer(String id,String fileName,String afterPath,String description);
 
 }
