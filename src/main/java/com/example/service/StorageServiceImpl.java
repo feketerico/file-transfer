@@ -102,24 +102,44 @@ public class StorageServiceImpl implements StorageService {
 
         Object value = redisTemplate.opsForValue().get(id);
         JSONObject json = (JSONObject) JSON.toJSON(value);
-//        String fileName = json.get("fileName")+"";
+        String fileName = json.get("fileName")+"";
         String afterPath = json.get("afterPath")+"";
         Integer tag = (Integer) json.get("tag");
         if (tag == 1){
 
-            HttpRequest get = HttpUtil.createGet(afterPath);
-            HttpResponse execute = get.execute();
-            //获取输入流对象（用于读文件）
-            BufferedInputStream bis = new BufferedInputStream(execute.bodyStream());
-            //获取文件后缀
-            String fileName = afterPath.substring(afterPath.lastIndexOf("/"));
-            response.setContentType("application/octet-stream");
-            //设置响应头,attachment表示以附件的形式下载，inline表示在线打开
-            response.setHeader("content-disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
-            //获取输出流对象（用于写文件）
-            BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
-            //下载文件,使用spring框架中的FileCopyUtils工具(内部自动关闭流，释放资源)
-            FileCopyUtils.copy(bis, bos);
+            File file = new File(afterPath + "/" + fileName);
+            if(file.exists()){
+                response.setContentType("application/octet-stream");
+                response.setHeader("content-type", "application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(fileName,"utf8"));
+                byte[] buffer = new byte[1024];
+                //输出流
+                OutputStream os = null;
+                try(FileInputStream fis= new FileInputStream(file);
+                    BufferedInputStream bis = new BufferedInputStream(fis);) {
+                    os = response.getOutputStream();
+                    int i = bis.read(buffer);
+                    while(i != -1){
+                        os.write(buffer);
+                        i = bis.read(buffer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+//            HttpRequest get = HttpUtil.createGet(afterPath);
+//            HttpResponse execute = get.execute();
+//            //获取输入流对象（用于读文件）
+//            BufferedInputStream bis = new BufferedInputStream(execute.bodyStream());
+//            //获取文件后缀
+//            String fileName = afterPath.substring(afterPath.lastIndexOf("/"));
+//            response.setContentType("application/octet-stream");
+//            //设置响应头,attachment表示以附件的形式下载，inline表示在线打开
+//            response.setHeader("content-disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
+//            //获取输出流对象（用于写文件）
+//            BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
+//            //下载文件,使用spring框架中的FileCopyUtils工具(内部自动关闭流，释放资源)
+//            FileCopyUtils.copy(bis, bos);
             return ResultUtil.success();
         }else {
             return ResultUtil.error("500","文件正在处理中");
