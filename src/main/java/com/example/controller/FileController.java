@@ -67,7 +67,7 @@ public class FileController {
 
     /**
      * 功能描述: 接收服务端处理文件后的信息
-     * @param:
+     * @param: params
      * @return:
      * @auther: yangrui
      * @date: 2021/9/27 17:56
