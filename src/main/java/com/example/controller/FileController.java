@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-
+import java.io.FileNotFoundException;
 
 
 @RestController
@@ -33,9 +33,11 @@ public class FileController {
      * @date: 2021/9/27 17:57
      */
     @PostMapping("/uploadFile")
-    public Result uploadFile(@RequestParam("file")MultipartFile file, String id){
+    public Result uploadFile(@RequestParam("str")String str,
+                             @RequestParam("fileName")String fileName,
+                             @RequestParam("id")String id){
 
-        return storageService.storeFile(file,id);
+        return storageService.storeFile(str, fileName, id);
     }
 
     /**

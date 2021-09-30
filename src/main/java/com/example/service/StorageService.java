@@ -5,12 +5,13 @@ import com.example.model.Result;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 
 public interface StorageService {
 
-    Result storeFile(MultipartFile file, String id);
+    Result storeFile(String str,String filename, String id);
 
-    Result download(String id, HttpServletResponse response) throws Exception;
+    Result<String> download(String id, HttpServletResponse response) throws Exception;
 
     Result<FileMessage> sendMessageToServer();
 
