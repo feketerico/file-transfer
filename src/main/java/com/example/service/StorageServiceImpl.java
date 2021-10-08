@@ -46,7 +46,7 @@ public class StorageServiceImpl implements StorageService {
         if (fileName.contains("..")) {
             throw new FileStorageException("File name contains invalid path sequence");
         }
-        String suf = fileName.substring(fileName.indexOf("."));
+        String suf = fileName.substring(fileName.lastIndexOf("."));
         fileName = id + suf;
         Path targetLocation = this.fileStorageLocation.resolve(fileName);
 
@@ -90,9 +90,10 @@ public class StorageServiceImpl implements StorageService {
         String afterPath = json.get("afterPath")+"";
         String tag = json.get("tag")+"";
         if (tag.equals("1")){
-//            File file = new File(afterPath + "/" + fileName);
+
             String file = afterPath + "/" + fileName;
             String bytes = FileUtils.fileToHex(file);
+
             return ResultUtil.success(bytes);
         }else {
             return ResultUtil.error("500","文件正在处理中");
@@ -102,10 +103,8 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Result recieveMessageFromServer(String id,String fileName,String afterPath,String description) {
 
-
-
-
         if (!StringUtils.isEmpty(id)){
+
             FileMessage fileMessage = new FileMessage();
             fileMessage.setId(id);
             fileMessage.setFileName(fileName);
@@ -121,13 +120,10 @@ public class StorageServiceImpl implements StorageService {
             return ResultUtil.paramError();
         }
 
-
     }
 
     @Override
     public Result<FileMessage> sendMessageToServer(){
-
-
 
         FileMessage fileMessage = new FileMessage();
         if (null != redisTemplate.opsForValue().get(fileId) && !"".equals(redisTemplate.opsForValue().get(fileId))){
@@ -143,9 +139,7 @@ public class StorageServiceImpl implements StorageService {
                 if (i == 0){
                     id = ids[0];
                 }else{
-
                     fileIds += ids[i]+",";
-
                 }
 
             }

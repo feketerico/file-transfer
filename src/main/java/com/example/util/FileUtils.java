@@ -124,7 +124,8 @@ public class FileUtils {
             System.out.println(bos.toString());
             byte[] result = bos.toByteArray();
             // 字节数组转成十六进制
-            String str = byte2HexStr(result);
+//            String str = byte2HexStr(result);
+            String str = bytesToHex(result);
 
             /*
 
@@ -135,12 +136,12 @@ public class FileUtils {
             return str;
         } catch (IOException e) {
             e.printStackTrace();
-            return "";
+            return null;
         }
     }
 
     /*
-     * 实现字节数组向十六进制的转换方法一
+     * 实现字节数组向十六进制的转换方法
      */
     public static String byte2HexStr(byte[] b) {
         String hs = "";
@@ -148,11 +149,24 @@ public class FileUtils {
         for (int n = 0; n < b.length; n++) {
             stmp = (Integer.toHexString(b[n] & 0XFF));
             if (stmp.length() == 1) {
-                hs = hs + "0" + stmp + "-";
+                hs = hs + "0" + stmp;
             } else {
-                hs = hs + stmp + "-";
+                hs = hs + stmp;
             }
         }
         return hs.toUpperCase();
+    }
+
+//加速版实现字节数组向十六进制的转换方法
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+
+        return new String(hexChars);
     }
 }
