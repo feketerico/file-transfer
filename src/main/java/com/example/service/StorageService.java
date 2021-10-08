@@ -9,9 +9,9 @@ import java.io.FileNotFoundException;
 
 public interface StorageService {
 
-    Result storeFile(String str,String filename, String id);
+    Result storeFile(String str,String filename, String id, String description);
 
-    Result<String> download(String id, HttpServletResponse response) throws Exception;
+    Result<String> download(String id) throws Exception;
 
     Result<FileMessage> sendMessageToServer();
 

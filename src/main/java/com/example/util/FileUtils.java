@@ -9,6 +9,7 @@ import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class FileUtils {
 
     private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
@@ -75,4 +76,83 @@ public class FileUtils {
         return str;
     }
 
+
+    public static void hexToApk(String hex, String filePath) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(hex);
+        saveToApkFile(sb.toString().toUpperCase(), filePath);
+    }
+
+    public static void saveToApkFile(String src, String output) {
+        if (src == null || src.length() == 0) {
+            return;
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(new File(output));
+            byte[] bytes = src.getBytes();
+            for (int i = 0; i < bytes.length; i+=2) {
+                out.write(charToInt(bytes[i]) * 16 + charToInt(bytes[i + 1]));
+            }
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private static int charToInt(byte ch) {
+        int val = 0;
+        if (ch >= 0x30 && ch <= 0x39) {
+            val = ch - 0x30;
+        } else if (ch >= 0x41 && ch <= 0x46) {
+            val = ch - 0x41 + 10;
+        }
+        return val;
+    }
+
+    public static String fileToHex(String file) {
+        try {
+            StringBuffer sb = new StringBuffer();
+            FileInputStream fis = new FileInputStream(file);
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int read = 1024;
+            int readSize = 1024;
+            while (read == readSize) {
+                read = fis.read(buffer, 0, readSize);
+                bos.write(buffer, 0, read);
+            }
+            // 得到图片的字节数组
+            System.out.println(bos.toString());
+            byte[] result = bos.toByteArray();
+            // 字节数组转成十六进制
+            String str = byte2HexStr(result);
+
+            /*
+
+             * 将十六进制串保存到txt文件中
+
+             */
+
+            return str;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /*
+     * 实现字节数组向十六进制的转换方法一
+     */
+    public static String byte2HexStr(byte[] b) {
+        String hs = "";
+        String stmp = "";
+        for (int n = 0; n < b.length; n++) {
+            stmp = (Integer.toHexString(b[n] & 0XFF));
+            if (stmp.length() == 1) {
+                hs = hs + "0" + stmp + "-";
+            } else {
+                hs = hs + stmp + "-";
+            }
+        }
+        return hs.toUpperCase();
+    }
 }

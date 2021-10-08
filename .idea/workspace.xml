@@ -10,14 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2b2dcd0-5917-4bac-ab49-5f3420ba6f97" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/util/FileUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/file_transfer_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/file_transfer_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/controller/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/controller/FileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/model/FileMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/model/FileMessage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/service/StorageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/service/StorageService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/service/StorageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/service/StorageServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/util/FileUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/util/FileUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +223,12 @@
       <workItem from="1632882450286" duration="10913000" />
       <workItem from="1632901424314" duration="2250000" />
       <workItem from="1632908218454" duration="1003000" />
-      <workItem from="1632961813951" duration="21685000" />
+      <workItem from="1632961813951" duration="21729000" />
+      <workItem from="1633571392049" duration="1165000" />
+      <workItem from="1633573762338" duration="764000" />
+      <workItem from="1633578807404" duration="3963000" />
+      <workItem from="1633590699493" duration="363000" />
+      <workItem from="1633592607672" duration="13572000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1632875950727</created>
@@ -248,7 +251,14 @@
       <option name="project" value="LOCAL" />
       <updated>1632902984780</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="2021年9月29日16:09:28">
+      <created>1632991137412</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1632991137412</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">

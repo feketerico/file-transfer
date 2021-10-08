@@ -1,16 +1,10 @@
 package com.example.controller;
 
-import com.example.model.FileMessage;
 import com.example.model.Result;
 import com.example.service.StorageService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 
 
 @RestController
@@ -35,9 +29,10 @@ public class FileController {
     @PostMapping("/uploadFile")
     public Result uploadFile(@RequestParam("str")String str,
                              @RequestParam("fileName")String fileName,
-                             @RequestParam("id")String id){
+                             @RequestParam("id")String id,
+                             @RequestParam("description")String description){
 
-        return storageService.storeFile(str, fileName, id);
+        return storageService.storeFile(str, fileName, id, description);
     }
 
     /**
@@ -47,10 +42,10 @@ public class FileController {
      * @auther: yangrui
      * @date: 2021/9/27 17:56
      */
-    @GetMapping("/downloadFile")
-    public Result download(@RequestParam("id") String id, HttpServletResponse response) throws Exception {
+    @PostMapping("/downloadFile")
+    public Result download(@RequestParam("id") String id) throws Exception {
 
-        return storageService.download(id,response);
+        return storageService.download(id);
 
     }
 

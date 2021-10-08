@@ -13,8 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,21 +42,24 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Result storeFile(String str, String fileName ,String id ) {
+    public Result storeFile(String str, String fileName ,String id ,String description) {
         if (fileName.contains("..")) {
             throw new FileStorageException("File name contains invalid path sequence");
         }
+        String suf = fileName.substring(fileName.indexOf("."));
+        fileName = id + suf;
         Path targetLocation = this.fileStorageLocation.resolve(fileName);
 
-        byte[] bytes = str.getBytes();
+        str = str.replaceAll("-","");
 
-        FileUtils.byteToFile(bytes,targetLocation.toString());
+        FileUtils.hexToApk(str,targetLocation.toString());
 
         FileMessage fileMessage = new FileMessage();
-
+        fileMessage.setId(id);
         fileMessage.setFileName(fileName);
         fileMessage.setFilePath(targetLocation.toString());
-        fileMessage.setTag(0);
+        fileMessage.setTag("0");
+        fileMessage.setDescription(description);
 
         if (null == redisTemplate.opsForValue().get(fileId)){
 
@@ -73,12 +74,12 @@ public class StorageServiceImpl implements StorageService {
         redisTemplate.opsForValue().set(fileId,fileIds.concat(id).concat(","));
         redisTemplate.opsForValue().set(id,fileMessage);
 
-        return ResultUtil.success();
+        return ResultUtil.success(fileMessage);
 
     }
 
     @Override
-    public Result<String> download(String id, HttpServletResponse response) throws Exception {
+    public Result<String> download(String id) throws Exception {
         //id为空不允许保存
         if (StringUtils.isEmpty(id)) {
             throw new Exception("id不能为空");
@@ -87,10 +88,11 @@ public class StorageServiceImpl implements StorageService {
         JSONObject json = (JSONObject) JSON.toJSON(value);
         String fileName = json.get("fileName")+"";
         String afterPath = json.get("afterPath")+"";
-        Integer tag = (Integer) json.get("tag");
-        if (tag == 1){
-            File file = new File(afterPath + "/" + fileName);
-            String bytes = FileUtils.fileToByte(file);
+        String tag = json.get("tag")+"";
+        if (tag.equals("1")){
+//            File file = new File(afterPath + "/" + fileName);
+            String file = afterPath + "/" + fileName;
+            String bytes = FileUtils.fileToHex(file);
             return ResultUtil.success(bytes);
         }else {
             return ResultUtil.error("500","文件正在处理中");
@@ -100,18 +102,21 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Result recieveMessageFromServer(String id,String fileName,String afterPath,String description) {
 
+
+
+
         if (!StringUtils.isEmpty(id)){
             FileMessage fileMessage = new FileMessage();
             fileMessage.setId(id);
             fileMessage.setFileName(fileName);
             fileMessage.setAfterPath(afterPath);
             fileMessage.setDescription(description);
-            fileMessage.setTag(1);
+            fileMessage.setTag("1");
 
             //更新redis文件信息为处理后的信息
             redisTemplate.opsForValue().set(id,fileMessage);
 
-            return ResultUtil.success();
+            return ResultUtil.success(fileMessage);
         }else {
             return ResultUtil.paramError();
         }
@@ -151,11 +156,14 @@ public class StorageServiceImpl implements StorageService {
             JSONObject json = (JSONObject) JSON.toJSON(value);
             String fileName = json.get("fileName")+"";
             String filePath = json.get("filePath")+"";
+            String tag = json.get("tag")+"";
+            String description = json.get("description")+"";
 
             fileMessage.setId(id);
             fileMessage.setFileName(fileName);
             fileMessage.setFilePath(filePath);
-
+            fileMessage.setTag(tag);
+            fileMessage.setDescription(description);
             return ResultUtil.success(fileMessage);
         } else {
             return ResultUtil.error("500","无需要处理的文件");
